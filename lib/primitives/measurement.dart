@@ -53,8 +53,8 @@ class Measurement {
   Measurement clone() => new Measurement(value: value, units: units);
 
   /// Implements the addition operator as a mutable function
-  Measurement operator +(Measurement other) => new Measurement(
-      value: this.value += other.convertTo(units), units: units);
+  Measurement operator +(Measurement other) =>
+      new Measurement(value: this.value + other.convertTo(units), units: units);
 
   /// Implements the unary subtraction operator as a mutable function
   Measurement operator -() => new Measurement(value: -value, units: units);
