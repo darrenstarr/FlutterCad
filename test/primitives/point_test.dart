@@ -36,4 +36,33 @@ void main() {
     expect(testValueB.x.mm, 10.0);
     expect(testValueB.y.mm, 20.0);
   });
+
+  test('Test copyBy', () {
+    var testValueA = new Point(
+        x: new Measurement(value: 10.0, units: MeasurementUnit.millimeters),
+        y: new Measurement(value: 20.0, units: MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 10.0);
+    expect(testValueA.y.mm, 20.0);
+
+    var testValueB = testValueA.copyBy(
+        new Measurement(value: 10.0, units: MeasurementUnit.millimeters),
+        new Measurement(value: 10.0, units: MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 10.0);
+    expect(testValueA.y.mm, 20.0);
+
+    expect(testValueB.x.mm, 20.0);
+    expect(testValueB.y.mm, 30.0);
+
+    testValueA.translate(
+        new Measurement(value: -10.0, units: MeasurementUnit.millimeters),
+        new Measurement(value: -10.0, units: MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 0.0);
+    expect(testValueA.y.mm, 10.0);
+
+    expect(testValueB.x.mm, 20.0);
+    expect(testValueB.y.mm, 30.0);
+  });
 }

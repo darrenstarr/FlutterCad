@@ -17,7 +17,7 @@ class Point {
   /// Deep copy the point
   ///
   /// @return The new point
-  Point clone() => new Point(x: x, y: y);
+  Point clone() => new Point(x: x.clone(), y: y.clone());
 
   /// Create a new point offset by the given offsets
   ///
