@@ -4,8 +4,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('Cloning', () {
-    var testValueA =
-        new Measurement(value: 25.4, units: MeasurementUnit.millimeters);
+    var testValueA = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(25.4, testValueA.mm);
 
     var testValueB = testValueA.clone();
@@ -17,91 +16,83 @@ void main() {
     expect(25.4, testValueB.mm);
   });
 
-  test('Test millimeter to millimeter conversion', () {
-    var testValue =
-        new Measurement(value: 25.4, units: MeasurementUnit.millimeters);
+  test('Millimeter to millimeter conversion', () {
+    var testValue = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(25.4, testValue.mm);
   });
 
-  test('Test centimeter to millimeter conversion', () {
-    var testValue =
-        new Measurement(value: 2.54, units: MeasurementUnit.centimeters);
+  test('Centimeter to millimeter conversion', () {
+    var testValue = new Measurement(2.54, MeasurementUnit.centimeters);
     expect(25.4, testValue.mm);
   });
 
-  test('Test points to millimeter conversion', () {
-    var testValue = new Measurement(value: 72, units: MeasurementUnit.points);
+  test('Points to millimeter conversion', () {
+    var testValue = new Measurement(72, MeasurementUnit.points);
     expect(25.4, testValue.mm);
   });
 
-  test('Test inches to millimeter conversion', () {
-    var testValue = new Measurement(value: 1, units: MeasurementUnit.inches);
+  test('Inches to millimeter conversion', () {
+    var testValue = new Measurement(1, MeasurementUnit.inches);
     expect(25.4, testValue.mm);
   });
 
-  test('Test millimeter to centimeter conversion', () {
-    var testValue =
-        new Measurement(value: 25.4, units: MeasurementUnit.millimeters);
+  test('Millimeter to centimeter conversion', () {
+    var testValue = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(2.54, testValue.cm);
   });
 
-  test('Test centimeter to centimeter conversion', () {
-    var testValue =
-        new Measurement(value: 2.54, units: MeasurementUnit.centimeters);
+  test('Centimeter to centimeter conversion', () {
+    var testValue = new Measurement(2.54, MeasurementUnit.centimeters);
     expect(2.54, testValue.cm);
   });
 
-  test('Test points to centimeter conversion', () {
-    var testValue = new Measurement(value: 72, units: MeasurementUnit.points);
+  test('Points to centimeter conversion', () {
+    var testValue = new Measurement(72, MeasurementUnit.points);
     expect(2.54, testValue.cm);
   });
 
-  test('Test inches to centimeter conversion', () {
-    var testValue = new Measurement(value: 1, units: MeasurementUnit.inches);
+  test('Inches to centimeter conversion', () {
+    var testValue = new Measurement(1, MeasurementUnit.inches);
     expect(2.54, testValue.cm);
   });
 
-  test('Test millimeter to inches conversion', () {
-    var testValue =
-        new Measurement(value: 25.4, units: MeasurementUnit.millimeters);
+  test('Millimeter to inches conversion', () {
+    var testValue = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(1, testValue.inches);
   });
 
-  test('Test centimeter to inches conversion', () {
-    var testValue =
-        new Measurement(value: 2.54, units: MeasurementUnit.centimeters);
+  test('Centimeter to inches conversion', () {
+    var testValue = new Measurement(2.54, MeasurementUnit.centimeters);
     expect(1, testValue.inches);
   });
 
-  test('Test points to inches conversion', () {
-    var testValue = new Measurement(value: 72, units: MeasurementUnit.points);
+  test('Points to inches conversion', () {
+    var testValue = new Measurement(72, MeasurementUnit.points);
     expect(1, testValue.inches);
   });
 
-  test('Test inches to inches conversion', () {
-    var testValue = new Measurement(value: 1, units: MeasurementUnit.inches);
+  test('Inches to inches conversion', () {
+    var testValue = new Measurement(1, MeasurementUnit.inches);
     expect(1, testValue.inches);
   });
 
-  test('Test millimeter to points conversion', () {
-    var testValue =
-        new Measurement(value: 25.4, units: MeasurementUnit.millimeters);
+  test('Millimeter to points conversion', () {
+    var testValue = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(72, testValue.points);
   });
 
-  test('Test centimeter to points conversion', () {
-    var testValue =
-        new Measurement(value: 2.54, units: MeasurementUnit.centimeters);
+  test('Centimeter to points conversion', () {
+    var testValue = new Measurement(2.54, MeasurementUnit.centimeters);
     expect(72, testValue.points);
   });
 
-  test('Test points to points conversion', () {
-    var testValue = new Measurement(value: 72, units: MeasurementUnit.points);
+  test('Points to points conversion', () {
+    var testValue = new Measurement(72, MeasurementUnit.points);
     expect(72, testValue.points);
   });
 
-  test('Test inches to points conversion', () {
-    var testValue = new Measurement(value: 1, units: MeasurementUnit.inches);
+  test('Inches to points conversion', () {
+    var testValue = new Measurement(1, MeasurementUnit.inches);
     expect(72, testValue.points);
   });
 
@@ -109,11 +100,11 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     var result = testValueA + testValueB;
 
@@ -124,11 +115,10 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB =
-        new Measurement(value: testDoubleValueB, units: MeasurementUnit.inches);
+    var testValueB = new Measurement(testDoubleValueB, MeasurementUnit.inches);
 
     var result = testValueA + testValueB;
 
@@ -139,22 +129,21 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB =
-        new Measurement(value: testDoubleValueB, units: MeasurementUnit.inches);
+    var testValueB = new Measurement(testDoubleValueB, MeasurementUnit.inches);
 
     var result = testValueA + testValueB;
 
     expect(testDoubleValueA + (testDoubleValueB * 25.4), result.mm);
   });
 
-  test('Test unary negation operator', () {
+  test('Unary negation operator', () {
     var testDoubleValueA = 1.5;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
     var result = -testValueA;
 
@@ -165,11 +154,11 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     var result = testValueA - testValueB;
 
@@ -180,11 +169,10 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB =
-        new Measurement(value: testDoubleValueB, units: MeasurementUnit.inches);
+    var testValueB = new Measurement(testDoubleValueB, MeasurementUnit.inches);
 
     var result = testValueA - testValueB;
 
@@ -195,11 +183,10 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB =
-        new Measurement(value: testDoubleValueB, units: MeasurementUnit.inches);
+    var testValueB = new Measurement(testDoubleValueB, MeasurementUnit.inches);
 
     var result = testValueA - testValueB;
 
@@ -210,8 +197,8 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
     var result = testValueA * testDoubleValueB;
 
@@ -222,8 +209,8 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
     var result = testValueA / testDoubleValueB;
 
@@ -234,11 +221,11 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(true, testValueA < testValueB);
     expect(false, testValueB < testValueA);
@@ -248,11 +235,10 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA =
-        new Measurement(value: testDoubleValueA, units: MeasurementUnit.inches);
+    var testValueA = new Measurement(testDoubleValueA, MeasurementUnit.inches);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(false, testValueA < testValueB);
     expect(true, testValueB < testValueA);
@@ -262,14 +248,14 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueC =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(true, testValueA <= testValueB);
     expect(false, testValueB <= testValueA);
@@ -280,14 +266,14 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB / 25.4, units: MeasurementUnit.inches);
+    var testValueC =
+        new Measurement(testDoubleValueB / 25.4, MeasurementUnit.inches);
 
     expect(false, testValueA <= testValueB);
     expect(true, testValueB <= testValueA);
@@ -298,11 +284,11 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(false, testValueA > testValueB);
     expect(true, testValueB > testValueA);
@@ -312,11 +298,10 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA =
-        new Measurement(value: testDoubleValueA, units: MeasurementUnit.inches);
+    var testValueA = new Measurement(testDoubleValueA, MeasurementUnit.inches);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(true, testValueA > testValueB);
     expect(false, testValueB > testValueA);
@@ -326,14 +311,14 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueC =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(false, testValueA >= testValueB);
     expect(true, testValueB >= testValueA);
@@ -344,14 +329,14 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB / 25.4, units: MeasurementUnit.inches);
+    var testValueC =
+        new Measurement(testDoubleValueB / 25.4, MeasurementUnit.inches);
 
     expect(true, testValueA >= testValueB);
     expect(false, testValueB >= testValueA);
@@ -362,14 +347,14 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.millimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.millimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueC =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(false, testValueA == testValueB);
     expect(false, testValueB == testValueA);
@@ -380,117 +365,162 @@ void main() {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement(
-        value: testDoubleValueB / 25.4, units: MeasurementUnit.inches);
+    var testValueC =
+        new Measurement(testDoubleValueB / 25.4, MeasurementUnit.inches);
 
     expect(false, testValueA == testValueB);
     expect(false, testValueB == testValueA);
     expect(true, testValueC == testValueB);
   });
 
-  test('Test absolute values', () {
+  test('Absolute values', () {
     var testDoubleValueA = -22.5;
     var testDoubleValueB = -testDoubleValueA;
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
     expect(testValueA.abs.cm, testDoubleValueB);
   });
 
-  test('Test square roots', () {
+  test('Square roots', () {
     var testDoubleValueA = 4.5;
     var testDoubleValueB = testDoubleValueA * testDoubleValueA;
-    var testValueA = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueB, MeasurementUnit.centimeters);
 
     expect(testValueA.sqrt.cm, testDoubleValueA);
   });
 
-  test('Test exponents', () {
+  test('Exponents', () {
     var testDoubleValueA = -22.5;
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
     expect(testDoubleValueA * testDoubleValueA * testDoubleValueA,
         testValueA.pow(3).cm);
   });
 
-  test('Test minimum measurement', () {
+  test('Minimum measurement', () {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(testValueB, Measurement.min(testValueA, testValueB));
   });
 
-  test('Test maximum measurement', () {
+  test('Maximum measurement', () {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(testValueA, Measurement.max(testValueA, testValueB));
   });
 
-  test('Test isZero', () {
+  test('isZero', () {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = 0.0;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
-    var testValueC = new Measurement();
+    var testValueC = new Measurement.zero();
 
     expect(testValueA.isZero, false);
     expect(testValueB.isZero, true);
     expect(testValueC.isZero, true);
   });
 
-  test('Test isNegative', () {
+  test('isNegative', () {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(testValueA.isNegative, false);
     expect(testValueB.isNegative, true);
   });
 
-  test('Test isNaN', () {
+  test('isNaN', () {
     var testDoubleValueA = 1.5;
     var testDoubleValueB = -2.8;
 
-    var testValueA = new Measurement(
-        value: testDoubleValueA, units: MeasurementUnit.centimeters);
+    var testValueA =
+        new Measurement(testDoubleValueA, MeasurementUnit.centimeters);
 
-    var testValueB = new Measurement(
-        value: testDoubleValueB, units: MeasurementUnit.millimeters);
+    var testValueB =
+        new Measurement(testDoubleValueB, MeasurementUnit.millimeters);
 
     expect(testValueA.isNaN, false);
     expect(testValueA.sqrt.isNaN, false);
     expect(testValueB.isNaN, false);
     expect(testValueB.sqrt.isNaN, true);
+  });
+
+  test('toString', () {
+    Measurement a = new Measurement.zero();
+
+    expect(a.toString(), "0.0 pt");
+
+    a.cm = 10.5;
+    expect(a.toString(), "10.5 cm");
+    a.mm = 100;
+    expect(a.toString(), "100.0 mm");
+    a.cm = 9.876543;
+    expect(a.toString(), "9.877 cm");
+
+    a.cm = -9.876543;
+    expect(a.toString(), "-9.877 cm");
+
+    a.inches = 15.5;
+    expect(a.toString(), "15 1/2 in");
+
+    a.inches = -15 - 9 / 16;
+    expect(a.toString(), "-15 9/16 in");
+
+    a.inches = -15 - 3 / 4;
+    expect(a.toString(), "-15 3/4 in");
+
+    a.inches = -15 - 5 / 8;
+    expect(a.toString(), "-15 5/8 in");
+
+    a.inches = -15.626;
+    expect(a.toString(), "-15 5/8 in");
+  });
+
+  test('Parse from string', () {
+    expect(Measurement.tryParse("0.0"), null);
+    expect(Measurement.tryParse("0.0cm")?.cm, 0.0);
+    expect(Measurement.tryParse("10.101cm")?.cm, 10.101);
+    expect(Measurement.tryParse("-10.101cm")?.cm, -10.101);
+
+    expect(Measurement.tryParse("10.101 millimeters")?.cm, 1.0101);
+
+    expect(Measurement.tryParse("100 5/8in.")?.inches, 100.625);
+    expect(Measurement.tryParse("100.625inches")?.inches, 100.625);
+    expect(Measurement.tryParse("-100 5/8in.")?.inches, -100.625);
+    expect(Measurement.tryParse("-5/8in.")?.inches, -0.625);
   });
 }
