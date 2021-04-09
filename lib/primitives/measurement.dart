@@ -109,7 +109,7 @@ class Measurement {
     var roundedValue = (value * factor).roundToDouble() / factor;
     var unitString = measurementUnitToAbbreviation(units);
 
-    return "$roundedValue $unitString";
+    return "$roundedValue$unitString";
   }
 
   /// Attempt to parse the given string into the form of a measurement
@@ -184,6 +184,17 @@ class Measurement {
   /// Returns a deep copy of the measurement
   Measurement clone() => new Measurement(value, units);
 
+  /// Return a deep copy with the measurement in desired unit format
+  ///
+  /// As with all floating point operations, conversion can come at the cost
+  /// of precision. This program is written using double precision floating
+  /// point values, so in most cases, the loss of precision should be minimal.
+  ///
+  /// @param desiredUnits the desired unit format
+  /// @return a deep copy and conversion of the measurement
+  Measurement cloneConverted(MeasurementUnit destinationUnits) =>
+      new Measurement(convertTo(destinationUnits), destinationUnits);
+
   /// Implements the addition operator as a mutable function
   Measurement operator +(Measurement other) =>
       new Measurement(this.value + other.convertTo(units), units);
@@ -209,6 +220,14 @@ class Measurement {
   /// another measurement as a factor.
   ///
   /// Before calculating the result, the units are converted to match
+  ///
+  /// As measurements only track a single unit type and doesn't
+  /// account for an exponent, be sure to keep track of units or
+  /// problems such as receiving a result in terms of points*mm or mm^2
+  /// is possible.
+  ///
+  /// @param other the other factor
+  /// @return a the product of the multiplication
   Measurement multiplyBy(Measurement other) =>
       new Measurement(value * other.convertTo(units), units);
 

@@ -16,6 +16,19 @@ void main() {
     expect(25.4, testValueB.mm);
   });
 
+  test('Cloning and normalizing', () {
+    var testValueA = new Measurement(25.4, MeasurementUnit.millimeters);
+    expect(25.4, testValueA.mm);
+
+    var testValueB = testValueA.cloneConverted(MeasurementUnit.inches);
+    expect(1, testValueB.inches);
+
+    testValueA.value = 50;
+
+    expect(50, testValueA.mm);
+    expect(25.4, testValueB.mm);
+  });
+
   test('Millimeter to millimeter conversion', () {
     var testValue = new Measurement(25.4, MeasurementUnit.millimeters);
     expect(25.4, testValue.mm);
@@ -482,17 +495,17 @@ void main() {
   test('toString', () {
     Measurement a = new Measurement.zero();
 
-    expect(a.toString(), "0.0 pt");
+    expect(a.toString(), "0.0pt");
 
     a.cm = 10.5;
-    expect(a.toString(), "10.5 cm");
+    expect(a.toString(), "10.5cm");
     a.mm = 100;
-    expect(a.toString(), "100.0 mm");
+    expect(a.toString(), "100.0mm");
     a.cm = 9.876543;
-    expect(a.toString(), "9.877 cm");
+    expect(a.toString(), "9.877cm");
 
     a.cm = -9.876543;
-    expect(a.toString(), "-9.877 cm");
+    expect(a.toString(), "-9.877cm");
 
     a.inches = 15.5;
     expect(a.toString(), "15 1/2 in");

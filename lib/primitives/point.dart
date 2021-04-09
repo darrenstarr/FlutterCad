@@ -1,4 +1,7 @@
 import 'dart:math' as math;
+import 'package:fluttercad/primitives/measurement_unit.dart';
+import 'package:vector_math/vector_math.dart';
+import 'package:fluttercad/primitives/linesegment.dart';
 
 import 'measurement.dart';
 
@@ -60,6 +63,18 @@ class Point {
   ///
   /// @return The new point
   Point clone() => new Point(x.clone(), y.clone());
+
+  /// Deep copy the point an normalize to the specified units
+  ///
+  /// @param destinationUnits the desired unit format
+  /// @return the new point
+  Point cloneAsUnits(MeasurementUnit destinationUnits) => new Point(
+      x.cloneConverted(destinationUnits), y.cloneConverted(destinationUnits));
+
+  /// Transpose and create a deep copy
+  ///
+  /// @return this point with X and Y reversed
+  Point cloneTransposed() => new Point(y.clone(), x.clone());
 
   /// Create a new point offset by the given offsets
   ///
@@ -185,6 +200,12 @@ class Point {
   Measurement distanceToSquared(Point other) =>
       (other.x - x).pow(2) + (other.y - y).pow(2);
 
+  /// Calculates the squared length of this point from the origin
+  ///
+  /// This is a helper function that eliminates an unneeded sqrt call
+  /// when simply comparing lengths of segments.
+  Measurement squaredLength() => x.pow(2) + y.pow(2);
+
   /// Calculates the counterclockwise angle of two other points relative to this point
   ///
   /// angle = a -> this -> b
@@ -203,5 +224,184 @@ class Point {
         : angle < -180
             ? -(-360 - angle)
             : angle;
+  }
+
+  /// Rotates this point clockwise around another point until it
+  /// rests on the given line in the expressed direction.
+  ///
+  /// @see [rotateAroundPointUntilIntersect] for details
+  ///
+  /// This function sets the constraints that the point must rest on the segment
+  /// and that the segments can't intersect at the start
+  ///
+  /// @param axis the axis to rotate upon
+  /// @param target The line to rest against
+  ///
+  /// @return either the touching point or null if this function fails to meet
+  ///   its constraints.
+  Point? rotateAroundPointUntilIntersectCW(Point axis, LineSegment target) {
+    return rotateAroundPointUntilIntersect(axis, target, true, true, true);
+  }
+
+  /// Rotates this point counter-clockwise around another point until it
+  /// rests on the given line in the expressed direction.
+  ///
+  /// @see [rotateAroundPointUntilIntersect] for details
+  ///
+  /// This function sets the constraints that the point must rest on the segment
+  /// and that the segments can't intersect at the start
+  ///
+  /// @param axis the axis to rotate upon
+  /// @param target The line to rest against
+  ///
+  /// @return either the touching point or null if this function fails to meet
+  ///   its constraints.
+  Point? rotateAroundPointUntilIntersectCCW(Point axis, LineSegment target) {
+    return rotateAroundPointUntilIntersect(axis, target, false, true, true);
+  }
+
+  /// Rotates this point around another point until it
+  /// rests on the given line in the expressed direction.
+  ///
+  /// This function is constrained to only returning a value if the point
+  /// does actually land on the other line segment, not the entire line.
+  ///
+  /// Also if this line intersects the other line to start with, a value
+  /// will not be returned.
+  ///
+  /// @param axis the axis to rotate upon
+  /// @param target The line to rest against
+  /// @param clockwise true for clockwise, false for counter clockwise
+  /// @param onSegment enforce that the point is on the segment, not the line
+  /// @param failOnIntersect fails if the segment produced by this point and
+  ///   the axis intersects the target.
+  ///
+  /// @return either the touching point or null if this function fails to meet
+  ///   its constraints.
+  Point? rotateAroundPointUntilIntersect(Point axis, LineSegment target,
+      bool clockwise, bool onSegment, bool failOnIntersect) {
+    var zero = new Measurement(0.0, MeasurementUnit.millimeters);
+
+    // Create copies of the input points with their units normalized
+    // to millimeters so that multiplication and division will always
+    // return compatible products.
+    var A = axis.cloneAsUnits(MeasurementUnit.millimeters);
+    var B = this.cloneAsUnits(MeasurementUnit.millimeters);
+    var C = target.a.cloneAsUnits(MeasurementUnit.millimeters);
+    var D = target.b.cloneAsUnits(MeasurementUnit.millimeters);
+
+    // Test whether line segment CD is vertical.
+    var transpose = C.x == D.x;
+
+    // Create a translated copy of the points so that the new A is on
+    // the origin. Optionally transpose all points so that the slope of CD
+    // is a valid number.
+    var pA = new Point.zero();
+    Point pB, pC, pD;
+    if (transpose) {
+      pB = (B - A).cloneTransposed();
+      pC = (C - A).cloneTransposed();
+      pD = (D - A).cloneTransposed();
+    } else {
+      pB = B - A;
+      pC = C - A;
+      pD = D - A;
+    }
+
+    // Find the slope of line CD
+    var mCD = LineSegment.slopeOf(pC, pD);
+
+    // Calculate the point (pE) where pE is bisects pCpD and pApE is
+    // perpendicular to pCpD
+    Point pE;
+    if (transpose) {
+      pE = new Point(zero, pC.y);
+    } else {
+      // Find the y-intercept of line pCpD
+      var bpCpD = pC.y - (pC.x * mCD);
+
+      // Find the slope of perpendicual intersection of the line pCpD
+      var mAE = -(1.0 / mCD);
+
+      var pEx = bpCpD / (mAE - mCD);
+      var pEy = pEx * mAE;
+      pE = new Point(pEx, pEy);
+    }
+
+    // Get the length of pApE which will form the base of an isoscolese triangle
+    // where pA is the height and the base is colinear to pCpD
+    var lenpApE = pA.distanceTo(pE);
+
+    // Calculate the half length of the base of the formentioned triangle where
+    // the two congruent sides are equal in length to AB
+    var lenAB = distanceTo(A);
+    var lenpEpF = (lenAB.multiplyBy(lenAB) - lenpApE.multiplyBy(lenpApE)).sqrt;
+
+    // Calculate the X delta travelled per unit along CD
+    var dmxCD = math.sqrt(mCD * mCD + 1);
+
+    // Calculate cartersian offsets from point pE to the points representing the
+    // base of the forementioned triangle.
+    var deltaX = lenpEpF / dmxCD;
+    var deltaY = deltaX * mCD;
+
+    // One of these two points will be clockwise relative to point pB around pA
+    // and the other will be counter clockwise.
+    var pF = new Point(pE.x - deltaX, pE.y - deltaY);
+    var pG = new Point(pE.x + deltaX, pE.y + deltaY);
+
+    // To identify which direction each point is relative to pA, calculate the
+    // cross products of the angles. As the earlier transposal required for a
+    // vertical CD reverses the direction of the calculation these values must
+    // be calculated with regard to that.
+    bool bBAG, bBAF, bFAG;
+    if (transpose) {
+      bBAF = (pB.y.multiplyBy(pF.x) - pB.x.multiplyBy(pF.y)) <= zero;
+      bBAG = (pB.y.multiplyBy(pG.x) - pB.x.multiplyBy(pG.y)) <= zero;
+      bFAG = (pF.y.multiplyBy(pG.x) - pF.x.multiplyBy(pG.y)) <= zero;
+    } else {
+      bBAF = (pB.x.multiplyBy(pF.y) - pB.y.multiplyBy(pF.x)) <= zero;
+      bBAG = (pB.x.multiplyBy(pG.y) - pB.y.multiplyBy(pG.x)) <= zero;
+      bFAG = (pF.x.multiplyBy(pG.y) - pF.y.multiplyBy(pG.x)) <= zero;
+    }
+
+    /// If the caller requests that the function should fail when AB intersects
+    /// CD, exit.
+    if (failOnIntersect &&
+        ((bBAF && !(bBAG || bFAG)) || (!bBAF && bBAG && bFAG))) {
+      return null;
+    }
+
+    // Identify whether pF is clockwise from pB around pA. This
+    // also considers whether pG affects pF's relationship to pB.
+    if (((bBAG && bBAF && bFAG) || ((!bBAG) && (bBAF || bFAG))) == clockwise) {
+      // Now we identify whether pF is between pC and pD by ensuring that
+      // angle pC -> pA -> pF and angle pF -> pA -> pD flow in the same
+      // direction
+      var bCAF = (pC.x.multiplyBy(pF.y) - pC.y.multiplyBy(pF.x)) > zero;
+      var bFAD = (pF.x.multiplyBy(pD.y) - pF.y.multiplyBy(pD.x)) > zero;
+      var bFonSegment = bCAF == bFAD;
+
+      if (!onSegment || bFonSegment) {
+        if (transpose)
+          return pF.cloneTransposed() + A;
+        else
+          return pF + A;
+      }
+    } else {
+      // We perform the same test for pG as we did for pF above.
+      var bCAG = (pC.x.multiplyBy(pG.y) - pC.y.multiplyBy(pG.x)) > zero;
+      var bGAD = (pG.x.multiplyBy(pD.y) - pG.y.multiplyBy(pD.x)) > zero;
+      var bGonSegment = bCAG == bGAD;
+
+      if (!onSegment || bGonSegment) {
+        if (transpose)
+          return pG.cloneTransposed() + A;
+        else
+          return pG + A;
+      }
+    }
+
+    return null;
   }
 }

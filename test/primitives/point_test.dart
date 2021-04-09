@@ -1,3 +1,4 @@
+import 'package:fluttercad/primitives/linesegment.dart';
 import 'package:fluttercad/primitives/measurement.dart';
 import 'package:fluttercad/primitives/measurement_unit.dart';
 import 'package:fluttercad/primitives/point.dart';
@@ -35,6 +36,52 @@ void main() {
 
     expect(testValueB.x.mm, 10.0);
     expect(testValueB.y.mm, 20.0);
+  });
+
+  test('Clone transposed', () {
+    var testValueA = new Point(
+        new Measurement(10.0, MeasurementUnit.millimeters),
+        new Measurement(20.0, MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 10.0);
+    expect(testValueA.y.mm, 20.0);
+
+    var testValueB = testValueA.cloneTransposed();
+
+    expect(testValueB.x.mm, 20.0);
+    expect(testValueB.y.mm, 10.0);
+
+    testValueA.translate(new Measurement(10.0, MeasurementUnit.millimeters),
+        new Measurement(10.0, MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 20.0);
+    expect(testValueA.y.mm, 30.0);
+
+    expect(testValueB.x.mm, 20.0);
+    expect(testValueB.y.mm, 10.0);
+  });
+
+  test('Clone normalized', () {
+    var testValueA = new Point(
+        new Measurement(10.0, MeasurementUnit.millimeters),
+        new Measurement(1.0, MeasurementUnit.inches));
+
+    expect(testValueA.x.mm, 10.0);
+    expect(testValueA.y.mm, 25.4);
+
+    var testValueB = testValueA.cloneAsUnits(MeasurementUnit.points);
+
+    expect(testValueB.x.value, closeTo(28.3465, 0.1));
+    expect(testValueB.y.value, closeTo(72.0, 0.1));
+
+    testValueA.translate(new Measurement(10.0, MeasurementUnit.millimeters),
+        new Measurement(10.0, MeasurementUnit.millimeters));
+
+    expect(testValueA.x.mm, 20.0);
+    expect(testValueA.y.mm, 35.4);
+
+    expect(testValueB.x.value, closeTo(28.3465, 0.1));
+    expect(testValueB.y.value, closeTo(72.0, 0.1));
   });
 
   test('copyBy', () {
@@ -118,7 +165,12 @@ void main() {
         new Measurement(10.0, MeasurementUnit.millimeters),
         new Measurement(10.0, MeasurementUnit.millimeters));
 
-    var result = testValueA.rotate(testValueB, 180.0);
+    var result = testValueA.rotate(testValueB, 45.0);
+
+    expect(result.x.mm, closeTo(10, 0.01));
+    expect(result.y.mm, closeTo(14.25, 0.01));
+
+    result = testValueA.rotate(testValueB, 180.0);
 
     expect(result.x.mm.round(), 7.0);
     expect(result.y.mm.round(), 7.0);
@@ -265,7 +317,7 @@ void main() {
         new Measurement(86.7548, MeasurementUnit.millimeters),
         new Measurement(123.14, MeasurementUnit.millimeters));
 
-    expect(testValueA.toString(), "(86.755 mm, 123.14 mm)");
+    expect(testValueA.toString(), "(86.755mm, 123.14mm)");
   });
 
   test('String parsing', () {
@@ -290,5 +342,21 @@ void main() {
 
     expect(Point.tryParse("( -16.5mm , 22 1/2in. )")?.x.mm, -16.5);
     expect(Point.tryParse("( -16.5mm , 22 1/2in. )")?.y.inches, 22.5);
+  });
+
+  test('Rotate point until linear intersection', () {
+    var target = LineSegment.tryParse("[(40mm,0mm)-(0mm,30mm)]")!;
+    var axis = Point.tryParse("(30mm, 12mm)")!;
+    var testPoint = Point.tryParse("(45mm, 12mm)")!;
+
+    var result = testPoint.rotateAroundPointUntilIntersectCW(axis, target)!;
+
+    expect(result.x.mm, closeTo(39.5, 0.1));
+    expect(result.y.mm, closeTo(0.4, 0.1));
+
+    result = testPoint.rotateAroundPointUntilIntersectCCW(axis, target)!;
+
+    expect(result.x.mm, closeTo(16.19, 0.1));
+    expect(result.y.mm, closeTo(17.85, 0.1));
   });
 }
