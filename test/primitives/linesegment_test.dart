@@ -41,6 +41,31 @@ void main() {
     expect(LineSegment.tryParse("[(-5mm,-2mm)-(15mm,6mm)]")?.a.x.mm, -5);
   });
 
+  test('Clone and normalized clone', () {
+    var segmentAB = LineSegment.tryParse("[(10mm,1in)-(72pt,1cm)]")!;
+    var result1 = segmentAB.clone();
+
+    expect(result1.a.x.mm, 10);
+    expect(result1.a.y.inches, 1);
+    expect(result1.b.x.points, 72);
+    expect(result1.b.y.cm, 1);
+
+    segmentAB.a.x.mm = 30;
+
+    expect(segmentAB.a.x.mm, 30);
+
+    expect(result1.a.x.mm, 10);
+    expect(result1.a.y.inches, 1);
+    expect(result1.b.x.points, 72);
+    expect(result1.b.y.cm, 1);
+
+    var result2 = segmentAB.cloneAsUnits(MeasurementUnit.millimeters);
+    expect(result2.a.x.value, 30);
+    expect(result2.a.y.value, 25.4);
+    expect(result2.b.x.value, 25.4);
+    expect(result2.b.y.value, 10);
+  });
+
   test('Midpoint/bisect', () {
     expect(LineSegment.tryParse("[(-5mm,-2mm)-(15mm,6mm)]")?.bisect(),
         Point.tryParse("(5mm,2mm)")!);

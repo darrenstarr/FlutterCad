@@ -29,6 +29,13 @@ class LineSegment {
   /// @return a deep copied line segment
   LineSegment clone() => new LineSegment(a.clone(), b.clone());
 
+  /// Deep copy with units normalization
+  ///
+  /// @param destinationUnits the desired output units format
+  /// @return the cloned value
+  LineSegment cloneAsUnits(MeasurementUnit destinationUnits) => new LineSegment(
+      a.cloneAsUnits(destinationUnits), b.cloneAsUnits(destinationUnits));
+
   /// toString() implementation
   String toString() => "[$a-$b]";
 
