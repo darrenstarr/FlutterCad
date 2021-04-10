@@ -1,6 +1,9 @@
 import 'measurement.dart';
 import 'measurement_unit.dart';
 
+RegExp _sizeComponentParser =
+    RegExp(r'^\(\s*(?<xval>[^,]+)\s*,\s*(?<yval>[^)]+)\)$');
+
 /// Class to implement the geometric representation of size
 class Size {
   Measurement width;
@@ -18,6 +21,41 @@ class Size {
   ///
   /// @return a deep copy of this value
   Size clone() => new Size(width.clone(), height.clone());
+
+  /// toString override
+  ///
+  /// @return Returns a string in format ([width], [height]) as measurements
+  String toString() => "($width, $height)";
+
+  /// Try to parse a string into a point value
+  ///
+  /// @param str the string to parse
+  /// @return the parsed Point or null
+  static Size? tryParse(String str) {
+    Iterable<RegExpMatch> matches = _sizeComponentParser.allMatches(str);
+
+    RegExpMatch match;
+    try {
+      match = matches.single;
+    } on StateError {
+      // State error is generated where there isn't a single match on a regexp
+      return null;
+    }
+
+    String? widthMeasurementString = match.namedGroup('xval');
+    String? heightMeasurementString = match.namedGroup('yval');
+    if (widthMeasurementString == null || heightMeasurementString == null)
+      return null;
+
+    Measurement? parsedWidthValue =
+        Measurement.tryParse(widthMeasurementString.trim());
+    Measurement? parsedHeightValue =
+        Measurement.tryParse(heightMeasurementString.trim());
+
+    if (parsedWidthValue == null || parsedHeightValue == null) return null;
+
+    return new Size(parsedWidthValue, parsedHeightValue);
+  }
 
   /// Deep copy with units normalization
   ///

@@ -27,7 +27,7 @@ class Point {
       : x = new Measurement.zero(),
         y = new Measurement.zero();
 
-  /// To string override
+  /// toString override
   ///
   /// @return Returns a string in format ([x], [y]) as measurements
   String toString() => '($x, $y)';
