@@ -5,15 +5,15 @@ import 'package:fluttercad/primitives/measurement_unit.dart';
 // This is a monster regexp for handling parsing of measurements
 // in multiple forms. It should be in sync with
 // https://regex101.com/r/1VBJBK/1
-RegExp _measurementComponentParser = RegExp(r'\s*' +
-    r'(?:((?<decVal>-?\d+(?:\.\d+)?)|' +
-    r'(?:(?<ratSign>-)?' +
-    r'(?<wholeVal>\d+\s+)?' +
-    r'(?<fracVal>(?<numer>\d+)\/(?<denom>\d+))))\s*' +
-    r'(?<unit>' +
-    r'(?:cm\.?|[Cc]entimeter(s)?)|' +
-    r'(?:(?:mm\.?|[Mm]illimeter(?:s)?))|' +
-    r'(?:(?:in\.?|[Ii]nch(?:e)?(?:s)?))|' +
+RegExp _measurementComponentParser = RegExp(r'\s*'
+    r'(?:((?<decVal>-?\d+(?:\.\d+)?)|'
+    r'(?:(?<ratSign>-)?'
+    r'(?<wholeVal>\d+\s+)?'
+    r'(?<fracVal>(?<numer>\d+)\/(?<denom>\d+))))\s*'
+    r'(?<unit>'
+    r'(?:cm\.?|[Cc]entimeter(s)?)|'
+    r'(?:(?:mm\.?|[Mm]illimeter(?:s)?))|'
+    r'(?:(?:in\.?|[Ii]nch(?:e)?(?:s)?))|'
     r'(?:(?:pt\.?|[Pp]oint(?:s)?))))$');
 
 /// Provides a class for storing a measurement with units
@@ -63,7 +63,7 @@ class Measurement {
   ///
   /// @param value The raw value
   /// @param units The units associated with this measurement
-  set(double value, MeasurementUnit units) {
+  void set(double value, MeasurementUnit units) {
     this.value = value;
     this.units = units;
   }
@@ -71,6 +71,7 @@ class Measurement {
   /// toString() override.
   ///
   /// This version uses the current units, 3 places of precision and fractions
+  @override
   String toString() {
     return toStringWithPrecisionAs(3, units);
   }
@@ -86,22 +87,22 @@ class Measurement {
 
     if (fractions && units == MeasurementUnit.inches) {
       var wholeNumber = value.truncate();
-      double fractionalComponent =
+      var fractionalComponent =
           ((value - wholeNumber) * 16.0).roundToDouble() / 16.0;
 
-      if (fractionalComponent == 0.000)
-        return "$wholeNumber in";
-      else if (fractionalComponent == 0.500)
-        return "$wholeNumber 1/2 in";
-      else if (fractionalComponent % (1 / 4) == 0) {
+      if (fractionalComponent == 0.000) {
+        return '$wholeNumber in';
+      } else if (fractionalComponent == 0.500) {
+        return '$wholeNumber 1/2 in';
+      } else if (fractionalComponent % (1 / 4) == 0) {
         var fraction = (fractionalComponent * 4.0).truncate().abs();
-        return "$wholeNumber $fraction/4 in";
+        return '$wholeNumber $fraction/4 in';
       } else if (fractionalComponent % (1 / 8) == 0) {
         var fraction = (fractionalComponent * 8.0).truncate().abs();
-        return "$wholeNumber $fraction/8 in";
+        return '$wholeNumber $fraction/8 in';
       } else {
         var fraction = (fractionalComponent * 16.0).truncate().abs();
-        return "$wholeNumber $fraction/16 in";
+        return '$wholeNumber $fraction/16 in';
       }
     }
 
@@ -109,7 +110,7 @@ class Measurement {
     var roundedValue = (value * factor).roundToDouble() / factor;
     var unitString = measurementUnitToAbbreviation(units);
 
-    return "$roundedValue$unitString";
+    return '$roundedValue$unitString';
   }
 
   /// Attempt to parse the given string into the form of a measurement
@@ -120,7 +121,7 @@ class Measurement {
   /// @param str The value to parse.
   /// @return the parsed measurement or null on failure
   static Measurement? tryParse(String str) {
-    Iterable<RegExpMatch> matches = _measurementComponentParser.allMatches(str);
+    var matches = _measurementComponentParser.allMatches(str);
 
     RegExpMatch match;
     try {
@@ -130,8 +131,8 @@ class Measurement {
       return null;
     }
 
-    double decimalValue = 0.0;
-    String? decimalGroup = match.namedGroup("decVal");
+    var decimalValue = 0.0;
+    var decimalGroup = match.namedGroup('decVal');
     if (decimalGroup != null) {
       // Handle decimal values here, they are parsed with the sign
       var parsed = double.tryParse(decimalGroup);
@@ -140,18 +141,19 @@ class Measurement {
       decimalValue = parsed;
     } else {
       // Handle the fractional values here
-      String? rationalSignGroup = match.namedGroup('ratSign');
-      String? wholeNumberGroup = match.namedGroup('wholeVal');
-      String? numeratorGroup = match.namedGroup('numer');
-      String? denominatorGroup = match.namedGroup('denom');
+      var rationalSignGroup = match.namedGroup('ratSign');
+      var wholeNumberGroup = match.namedGroup('wholeVal');
+      var numeratorGroup = match.namedGroup('numer');
+      var denominatorGroup = match.namedGroup('denom');
 
       // Process the whole number component if it's present
       if (wholeNumberGroup != null) {
         var parsedWholeNumber = double.tryParse(wholeNumberGroup);
-        if (parsedWholeNumber == null)
+        if (parsedWholeNumber == null) {
           return null;
-        else
+        } else {
           decimalValue = parsedWholeNumber;
+        }
       }
 
       // Process the fractional component if it's present
@@ -159,10 +161,11 @@ class Measurement {
         var parsedNumerator = double.tryParse(numeratorGroup);
         var parsedDenominator = double.tryParse(denominatorGroup);
 
-        if (parsedNumerator == null || parsedDenominator == null)
+        if (parsedNumerator == null || parsedDenominator == null) {
           return null;
-        else
+        } else {
           decimalValue += parsedNumerator / parsedDenominator;
+        }
       } else if (numeratorGroup != null || denominatorGroup != null) {
         // If either the numerator or denominator is missing, fail
         return null;
@@ -172,17 +175,17 @@ class Measurement {
       if (rationalSignGroup != null) decimalValue = 0 - decimalValue;
     }
 
-    String? unitGroup = match.namedGroup('unit');
+    var unitGroup = match.namedGroup('unit');
     if (unitGroup == null) return null;
 
-    MeasurementUnit? units = tryParseMeasurementUnit(unitGroup);
+    var units = tryParseMeasurementUnit(unitGroup);
     if (units == null) return null;
 
-    return new Measurement(decimalValue, units);
+    return Measurement(decimalValue, units);
   }
 
   /// Returns a deep copy of the measurement
-  Measurement clone() => new Measurement(value, units);
+  Measurement clone() => Measurement(value, units);
 
   /// Return a deep copy with the measurement in desired unit format
   ///
@@ -193,14 +196,14 @@ class Measurement {
   /// @param desiredUnits the desired unit format
   /// @return a deep copy and conversion of the measurement
   Measurement cloneConverted(MeasurementUnit destinationUnits) =>
-      new Measurement(convertTo(destinationUnits), destinationUnits);
+      Measurement(convertTo(destinationUnits), destinationUnits);
 
   /// Implements the addition operator as a mutable function
   Measurement operator +(Measurement other) =>
-      new Measurement(this.value + other.convertTo(units), units);
+      Measurement(value + other.convertTo(units), units);
 
   /// Implements the unary subtraction operator as a mutable function
-  Measurement operator -() => new Measurement(-value, units);
+  Measurement operator -() => Measurement(-value, units);
 
   /// Implements the subtraction operator as a mutable function
   ///
@@ -213,8 +216,7 @@ class Measurement {
 
   /// Implements the multiplication operator as a mutable function against a
   /// double precision factor.
-  Measurement operator *(double factor) =>
-      new Measurement(value * factor, units);
+  Measurement operator *(double factor) => Measurement(value * factor, units);
 
   /// Implements multiplication as a mutable function against
   /// another measurement as a factor.
@@ -229,12 +231,11 @@ class Measurement {
   /// @param other the other factor
   /// @return a the product of the multiplication
   Measurement multiplyBy(Measurement other) =>
-      new Measurement(value * other.convertTo(units), units);
+      Measurement(value * other.convertTo(units), units);
 
   /// Implements the division operator as a mutable function against a
   /// double precision divisor.
-  Measurement operator /(double divisor) =>
-      new Measurement(value / divisor, units);
+  Measurement operator /(double divisor) => Measurement(value / divisor, units);
 
   /// Implements the less than operator
   bool operator <(Measurement other) => value < other.convertTo(units);
@@ -249,18 +250,19 @@ class Measurement {
   bool operator >=(Measurement other) => value >= other.convertTo(units);
 
   /// Implements the equal to operator
+  @override
   bool operator ==(Object other) =>
       other is Measurement && (value == other.convertTo(units));
 
   /// Returns the absolute value of a measurement
-  Measurement get abs => new Measurement(value.abs(), units);
+  Measurement get abs => Measurement(value.abs(), units);
 
   /// Returns the value raised to the given exponent
   Measurement pow(double power) =>
-      new Measurement(math.pow(value, power).toDouble(), units);
+      Measurement(math.pow(value, power).toDouble(), units);
 
   /// Returns the square root of the measurement
-  Measurement get sqrt => new Measurement(math.sqrt(value), units);
+  Measurement get sqrt => Measurement(math.sqrt(value), units);
 
   /// Returns which of two measurements is the minimum
   static Measurement min(Measurement a, Measurement b) => a <= b ? a : b;
@@ -337,7 +339,7 @@ class Measurement {
       }
     }
 
-    throw new FallThroughError();
+    throw FallThroughError();
   }
 
   // Below are constants used for conversion

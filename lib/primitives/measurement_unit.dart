@@ -7,13 +7,13 @@ enum MeasurementUnit { centimeters, millimeters, inches, points }
 String measurementUnitToAbbreviation(MeasurementUnit units) {
   switch (units) {
     case MeasurementUnit.centimeters:
-      return "cm";
+      return 'cm';
     case MeasurementUnit.millimeters:
-      return "mm";
+      return 'mm';
     case MeasurementUnit.inches:
-      return "in";
+      return 'in';
     case MeasurementUnit.points:
-      return "pt";
+      return 'pt';
   }
 }
 
@@ -25,21 +25,22 @@ RegExp _measurementUnitParser = RegExp(
 /// @param unitString value to convert
 /// @return the measurement unit if successfully parsed
 MeasurementUnit? tryParseMeasurementUnit(String unitString) {
-  Iterable<RegExpMatch> matches = _measurementUnitParser.allMatches(unitString);
+  var matches = _measurementUnitParser.allMatches(unitString);
 
   try {
     var match = matches.single;
 
-    if (match.namedGroup("cm") != null)
+    if (match.namedGroup('cm') != null) {
       return MeasurementUnit.centimeters;
-    else if (match.namedGroup("mm") != null)
+    } else if (match.namedGroup('mm') != null) {
       return MeasurementUnit.millimeters;
-    else if (match.namedGroup("in") != null)
+    } else if (match.namedGroup('in') != null) {
       return MeasurementUnit.inches;
-    else if (match.namedGroup("pt") != null)
+    } else if (match.namedGroup('pt') != null) {
       return MeasurementUnit.points;
-    else
+    } else {
       return null;
+    }
   } on StateError {
     // State error is generated where there isn't a single match on a regexp
     return null;

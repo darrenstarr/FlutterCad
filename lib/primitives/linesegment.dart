@@ -1,6 +1,7 @@
 import 'package:fluttercad/primitives/measurement.dart';
 import 'package:fluttercad/primitives/measurement_unit.dart';
 import 'package:fluttercad/primitives/point.dart';
+import 'package:fluttercad/primitives/rectangle.dart';
 
 RegExp _lineSegmentComponentParser =
     RegExp(r'^\[\s*(?<aval>\([^\)]+\))\s*-\s*(?<bval>\([^\)]+\))\s*\]$');
@@ -11,8 +12,8 @@ class LineSegment {
 
   /// Zero constructor
   LineSegment.zero()
-      : a = new Point.zero(),
-        b = new Point.zero();
+      : a = Point.zero(),
+        b = Point.zero();
 
   /// Default constructor
   ///
@@ -21,30 +22,31 @@ class LineSegment {
   /// @param a one point on the line segment
   /// @param b the other point on the line segment
   LineSegment(Point a, Point b)
-      : this.a = a.clone(),
-        this.b = b.clone();
+      : a = a.clone(),
+        b = b.clone();
 
   /// Performs a deep copy of the line segment
   ///
   /// @return a deep copied line segment
-  LineSegment clone() => new LineSegment(a.clone(), b.clone());
+  LineSegment clone() => LineSegment(a.clone(), b.clone());
 
   /// Deep copy with units normalization
   ///
   /// @param destinationUnits the desired output units format
   /// @return the cloned value
-  LineSegment cloneAsUnits(MeasurementUnit destinationUnits) => new LineSegment(
+  LineSegment cloneAsUnits(MeasurementUnit destinationUnits) => LineSegment(
       a.cloneAsUnits(destinationUnits), b.cloneAsUnits(destinationUnits));
 
   /// toString() implementation
-  String toString() => "[$a-$b]";
+  @override
+  String toString() => '[$a-$b]';
 
   /// Attempt to parse the given string into a line segment
   ///
   /// @param str the string to parse
   /// @return the resulting LineSegment or null
   static LineSegment? tryParse(String str) {
-    Iterable<RegExpMatch> matches = _lineSegmentComponentParser.allMatches(str);
+    var matches = _lineSegmentComponentParser.allMatches(str);
 
     RegExpMatch match;
     try {
@@ -54,22 +56,22 @@ class LineSegment {
       return null;
     }
 
-    String? aPointString = match.namedGroup('aval');
-    String? bPointString = match.namedGroup('bval');
+    var aPointString = match.namedGroup('aval');
+    var bPointString = match.namedGroup('bval');
     if (aPointString == null || bPointString == null) return null;
 
-    Point? parsedAValue = Point.tryParse(aPointString.trim());
-    Point? parsedBValue = Point.tryParse(bPointString.trim());
+    var parsedAValue = Point.tryParse(aPointString.trim());
+    var parsedBValue = Point.tryParse(bPointString.trim());
 
     if (parsedAValue == null || parsedBValue == null) return null;
 
-    return new LineSegment(parsedAValue, parsedBValue);
+    return LineSegment(parsedAValue, parsedBValue);
   }
 
   /// Returns the midpoint of the line segment
   ///
   /// @return the point representing the midpoint
-  Point bisect() => new Point(a.x + ((b.x - a.x) / 2), a.y + ((b.y - a.y) / 2));
+  Point bisect() => Point(a.x + ((b.x - a.x) / 2), a.y + ((b.y - a.y) / 2));
 
   /// Returns the angle of the line segment travelling from a to b
   ///
@@ -92,7 +94,7 @@ class LineSegment {
   ///
   /// @param origin the center of rotation
   /// @param angle the number of degrees to rotate the line
-  rotate(Point origin, double angle) {
+  void rotate(Point origin, double angle) {
     a = a.rotate(origin, angle);
     b = b.rotate(origin, angle);
   }
@@ -106,7 +108,7 @@ class LineSegment {
     var midpoint = bisect();
     var angle = this.angle + 90.0;
 
-    return new LineSegment(midpoint.copyByAngle(cwLength, angle),
+    return LineSegment(midpoint.copyByAngle(cwLength, angle),
         midpoint.copyByAngle(ccwLength, angle + 180.0));
   }
 
@@ -128,8 +130,9 @@ class LineSegment {
                 .points /
             (-s2.x.multiplyBy(s1.y) + s1.x.multiplyBy(s2.y)).points;
 
-    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-      return new Point(a.x + (s1.x * t), a.y + (s1.y * t));
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+      return Point(a.x + (s1.x * t), a.y + (s1.y * t));
+    }
 
     return null;
   }
@@ -148,14 +151,14 @@ class LineSegment {
   /// @param byDistance the distance to extend by
   /// @return the new line segment
   LineSegment extendedBy(Measurement byDistance) =>
-      new LineSegment(a, b.copyByAngle(byDistance, angle));
+      LineSegment(a, b.copyByAngle(byDistance, angle));
 
   /// Creates a copy of the segment with the new length as given starting from a
   ///
   /// @param newLength the specific length
   /// @return the new line segment
   LineSegment withLength(Measurement newLength) =>
-      new LineSegment(a, a.copyByAngle(newLength, angle));
+      LineSegment(a, a.copyByAngle(newLength, angle));
 
   /// Calculates the slope of the line segment
   double get slope => slopeOf(a, b);
@@ -186,7 +189,7 @@ class LineSegment {
 
     if (newBPoint == null) return null;
 
-    return new LineSegment(a.clone(), newBPoint);
+    return LineSegment(a.clone(), newBPoint);
   }
 
   /// Rotates this line segment counter-clockwise around it's a point a until it
@@ -206,7 +209,7 @@ class LineSegment {
 
     if (newBPoint == null) return null;
 
-    return new LineSegment(a.clone(), newBPoint);
+    return LineSegment(a.clone(), newBPoint);
   }
 
   /// Calculates the point on this segment resting the closest to the specified
@@ -233,4 +236,9 @@ class LineSegment {
 
     return pA + ab.scaled(distance);
   }
+
+  /// Returns the bounding rectangle of the line segment
+  ///
+  /// @return the bounding rectangle of the segment (this is a deed copy)
+  Rectangle extents() => Rectangle.coordinates(a, b).cloneNormalized();
 }

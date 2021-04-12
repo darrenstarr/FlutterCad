@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:fluttercad/primitives/measurement_unit.dart';
-import 'package:vector_math/vector_math.dart';
 import 'package:fluttercad/primitives/linesegment.dart';
 
 import 'measurement.dart';
@@ -24,12 +23,13 @@ class Point {
 
   /// Zero constructor
   Point.zero()
-      : x = new Measurement.zero(),
-        y = new Measurement.zero();
+      : x = Measurement.zero(),
+        y = Measurement.zero();
 
   /// toString override
   ///
   /// @return Returns a string in format ([x], [y]) as measurements
+  @override
   String toString() => '($x, $y)';
 
   /// Try to parse a string into a point value
@@ -37,7 +37,7 @@ class Point {
   /// @param str the string to parse
   /// @return the parsed Point or null
   static Point? tryParse(String str) {
-    Iterable<RegExpMatch> matches = _pointComponentParser.allMatches(str);
+    var matches = _pointComponentParser.allMatches(str);
 
     RegExpMatch match;
     try {
@@ -47,34 +47,34 @@ class Point {
       return null;
     }
 
-    String? xMeasurementString = match.namedGroup('xval');
-    String? yMeasurementString = match.namedGroup('yval');
+    var xMeasurementString = match.namedGroup('xval');
+    var yMeasurementString = match.namedGroup('yval');
     if (xMeasurementString == null || yMeasurementString == null) return null;
 
-    Measurement? parsedXValue = Measurement.tryParse(xMeasurementString.trim());
-    Measurement? parsedYValue = Measurement.tryParse(yMeasurementString.trim());
+    var parsedXValue = Measurement.tryParse(xMeasurementString.trim());
+    var parsedYValue = Measurement.tryParse(yMeasurementString.trim());
 
     if (parsedXValue == null || parsedYValue == null) return null;
 
-    return new Point(parsedXValue, parsedYValue);
+    return Point(parsedXValue, parsedYValue);
   }
 
   /// Deep copy the point
   ///
   /// @return The new point
-  Point clone() => new Point(x.clone(), y.clone());
+  Point clone() => Point(x.clone(), y.clone());
 
   /// Deep copy the point an normalize to the specified units
   ///
   /// @param destinationUnits the desired unit format
   /// @return the new point
-  Point cloneAsUnits(MeasurementUnit destinationUnits) => new Point(
+  Point cloneAsUnits(MeasurementUnit destinationUnits) => Point(
       x.cloneConverted(destinationUnits), y.cloneConverted(destinationUnits));
 
   /// Transpose and create a deep copy
   ///
   /// @return this point with X and Y reversed
-  Point cloneTransposed() => new Point(y.clone(), x.clone());
+  Point cloneTransposed() => Point(y.clone(), x.clone());
 
   /// Create a new point offset by the given offsets
   ///
@@ -82,13 +82,13 @@ class Point {
   /// @param offsetY the Y offset from this point
   /// @return the new point
   Point copyBy(Measurement offsetX, Measurement offsetY) =>
-      new Point(x + offsetX, y + offsetY);
+      Point(x + offsetX, y + offsetY);
 
   /// Translate this point by the given offsets
   ///
   /// @param offsetX the X offset from the original point
   /// @param offsetY the Y offset from the original point
-  translate(Measurement offsetX, Measurement offsetY) {
+  void translate(Measurement offsetX, Measurement offsetY) {
     x += offsetX;
     y += offsetY;
   }
@@ -99,7 +99,7 @@ class Point {
   /// @param angle the clockwise angle of direction in degrees
   /// @return the new point
   Point copyByAngle(Measurement distance, double angle) {
-    return new Point(x - distance * math.cos(angle * math.pi / 180.0),
+    return Point(x - distance * math.cos(angle * math.pi / 180.0),
         y - distance * math.sin(angle * math.pi / 180.0));
   }
 
@@ -141,26 +141,26 @@ class Point {
   ///
   /// @param factor the factor to scale from the origin by
   /// @return the calculated result
-  Point scaled(double factor) => new Point(x * factor, y * factor);
+  Point scaled(double factor) => Point(x * factor, y * factor);
 
   /// Addition operator
   ///
   /// @param other the other addend
   /// @result the sum of the parts
-  Point operator +(Point other) => new Point(x + other.x, y + other.y);
+  Point operator +(Point other) => Point(x + other.x, y + other.y);
 
   /// Subtraction operator
   ///
   /// @param other the subtrahend
   /// @result the sum of the parts
-  Point operator -(Point other) => new Point(x - other.x, y - other.y);
+  Point operator -(Point other) => Point(x - other.x, y - other.y);
 
   /// Multiplication (matrix form)
   ///
   /// @param other the other term
   /// @result the sum of the parts
   Point multiplyBy(Point other) =>
-      new Point(x.multiplyBy(other.x), y.multiplyBy(other.y));
+      Point(x.multiplyBy(other.x), y.multiplyBy(other.y));
 
   /// Multiplication operator (scalar form)
   ///
@@ -169,6 +169,7 @@ class Point {
   Point operator *(double other) => scaled(other);
 
   /// Equal operator
+  @override
   bool operator ==(Object other) =>
       (other is Point) && x == other.x && y == other.y;
 
@@ -181,7 +182,7 @@ class Point {
   /// @param other term in dot product
   /// @result the dot product of the two terms
   Measurement dot(Point other) {
-    var product = this.multiplyBy(other);
+    var product = multiplyBy(other);
     return product.x + product.y;
   }
 
@@ -217,7 +218,7 @@ class Point {
   /// @return the counterclockwise angle in degrees between a and b
   ///   relative to this
   double angleBetween(Point a, Point b) {
-    double angle = angleTo(b) - angleTo(a);
+    var angle = angleTo(b) - angleTo(a);
 
     return angle > 180
         ? -(360 - angle)
@@ -280,13 +281,13 @@ class Point {
   ///   its constraints.
   Point? rotateAroundPointUntilIntersect(Point axis, LineSegment target,
       bool clockwise, bool onSegment, bool failOnIntersect) {
-    var zero = new Measurement(0.0, MeasurementUnit.millimeters);
+    var zero = Measurement(0.0, MeasurementUnit.millimeters);
 
     // Create copies of the input points with their units normalized
     // to millimeters so that multiplication and division will always
     // return compatible products.
     var A = axis.cloneAsUnits(MeasurementUnit.millimeters);
-    var B = this.cloneAsUnits(MeasurementUnit.millimeters);
+    var B = cloneAsUnits(MeasurementUnit.millimeters);
     var C = target.a.cloneAsUnits(MeasurementUnit.millimeters);
     var D = target.b.cloneAsUnits(MeasurementUnit.millimeters);
 
@@ -296,7 +297,7 @@ class Point {
     // Create a translated copy of the points so that the new A is on
     // the origin. Optionally transpose all points so that the slope of CD
     // is a valid number.
-    var pA = new Point.zero();
+    var pA = Point.zero();
     Point pB, pC, pD;
     if (transpose) {
       pB = (B - A).cloneTransposed();
@@ -315,7 +316,7 @@ class Point {
     // perpendicular to pCpD
     Point pE;
     if (transpose) {
-      pE = new Point(zero, pC.y);
+      pE = Point(zero, pC.y);
     } else {
       // Find the y-intercept of line pCpD
       var bpCpD = pC.y - (pC.x * mCD);
@@ -325,7 +326,7 @@ class Point {
 
       var pEx = bpCpD / (mAE - mCD);
       var pEy = pEx * mAE;
-      pE = new Point(pEx, pEy);
+      pE = Point(pEx, pEy);
     }
 
     // Get the length of pApE which will form the base of an isoscolese triangle
@@ -347,8 +348,8 @@ class Point {
 
     // One of these two points will be clockwise relative to point pB around pA
     // and the other will be counter clockwise.
-    var pF = new Point(pE.x - deltaX, pE.y - deltaY);
-    var pG = new Point(pE.x + deltaX, pE.y + deltaY);
+    var pF = Point(pE.x - deltaX, pE.y - deltaY);
+    var pG = Point(pE.x + deltaX, pE.y + deltaY);
 
     // To identify which direction each point is relative to pA, calculate the
     // cross products of the angles. As the earlier transposal required for a
@@ -383,10 +384,11 @@ class Point {
       var bFonSegment = bCAF == bFAD;
 
       if (!onSegment || bFonSegment) {
-        if (transpose)
+        if (transpose) {
           return pF.cloneTransposed() + A;
-        else
+        } else {
           return pF + A;
+        }
       }
     } else {
       // We perform the same test for pG as we did for pF above.
@@ -395,10 +397,11 @@ class Point {
       var bGonSegment = bCAG == bGAD;
 
       if (!onSegment || bGonSegment) {
-        if (transpose)
+        if (transpose) {
           return pG.cloneTransposed() + A;
-        else
+        } else {
           return pG + A;
+        }
       }
     }
 
